@@ -1,1 +1,7 @@
 c:\users\simgreci\documents\visual studio 2015\Projects\SQLXEtoEventHub\SQLXEtoEventHub\bin\Debug\SQLXEtoEventHub.exe.config
+C:\Users\simgreci\Documents\GitHub\SQLXEtoEventHub\SQLXEtoEventHub\bin\Debug\SQLXEtoEventHub.exe.config
+C:\Users\simgreci\Documents\GitHub\SQLXEtoEventHub\SQLXEtoEventHub\obj\Debug\SQLXEtoEventHub.csprojResolveAssemblyReference.cache
+C:\Users\simgreci\Documents\GitHub\SQLXEtoEventHub\SQLXEtoEventHub\bin\Debug\SQLXEtoEventHub.exe
+C:\Users\simgreci\Documents\GitHub\SQLXEtoEventHub\SQLXEtoEventHub\bin\Debug\SQLXEtoEventHub.pdb
+C:\Users\simgreci\Documents\GitHub\SQLXEtoEventHub\SQLXEtoEventHub\obj\Debug\SQLXEtoEventHub.exe
+C:\Users\simgreci\Documents\GitHub\SQLXEtoEventHub\SQLXEtoEventHub\obj\Debug\SQLXEtoEventHub.pdb
