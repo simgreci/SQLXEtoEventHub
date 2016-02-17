@@ -1,6 +1,8 @@
 SQLXEtoEventHub/obj
 SQLXEtoEventHub/bin
 
+packages
+
 *.vsp
 *.psess
 
