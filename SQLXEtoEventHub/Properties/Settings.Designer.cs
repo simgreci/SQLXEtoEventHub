@@ -26,7 +26,7 @@ namespace SQLXEtoEventHub.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("ooooo")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=localhost;Trusted_Connection=True;")]
         public string SQLServerConnectionString {
             get {
                 return ((string)(this["SQLServerConnectionString"]));
@@ -35,20 +35,10 @@ namespace SQLXEtoEventHub.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\temp")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\SqlServer\\output")]
         public string XELPath {
             get {
                 return ((string)(this["XELPath"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Endpoint=sb://mindflavorns.servicebus.windows.net/;SharedAccessKeyName=write_only" +
-            ";SharedAccessKey=BUupn4M9YUWlmVHrTryvKh9j/ap2PdGOJGV3TapnDJU=")]
-        public string EventHubConnectionString {
-            get {
-                return ((string)(this["EventHubConnectionString"]));
             }
         }
         
@@ -58,6 +48,16 @@ namespace SQLXEtoEventHub.Properties {
         public string EventHubName {
             get {
                 return ((string)(this["EventHubName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Endpoint=sb://simgreci.servicebus.windows.net/;SharedAccessKeyName=write_only;Sha" +
+            "redAccessKey=Y+ZVz/kqRiiaDjIaOj9MSwi+57qXyGhn/GTtylTTDYM=")]
+        public string EventHubConnectionString {
+            get {
+                return ((string)(this["EventHubConnectionString"]));
             }
         }
     }

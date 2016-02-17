@@ -41,7 +41,11 @@ namespace SQLXEtoEventHub
 
             //pos = new XEPosition.XEPosition { LastFile = lastEvent. } TODO!
 
-            Parallel.ForEach(events, (e) => { ehw.Send(e); });
+            foreach(XEvent e in events)
+            {
+                ehw.Send(e);
+            }
+            //Parallel.ForEach(events, (e) => { ehw.Send(e); });
         }
     }
 }

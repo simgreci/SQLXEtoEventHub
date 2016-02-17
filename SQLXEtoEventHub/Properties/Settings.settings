@@ -5,18 +5,18 @@
     <Setting Name="SQLServerConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;ooooo&lt;/ConnectionString&gt;
+  &lt;ConnectionString&gt;Server=localhost;Trusted_Connection=True;&lt;/ConnectionString&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">ooooo</Value>
+      <Value Profile="(Default)">Server=localhost;Trusted_Connection=True;</Value>
     </Setting>
     <Setting Name="XELPath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">D:\temp</Value>
-    </Setting>
-    <Setting Name="EventHubConnectionString" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Endpoint=sb://mindflavorns.servicebus.windows.net/;SharedAccessKeyName=write_only;SharedAccessKey=BUupn4M9YUWlmVHrTryvKh9j/ap2PdGOJGV3TapnDJU=</Value>
+      <Value Profile="(Default)">C:\SqlServer\output</Value>
     </Setting>
     <Setting Name="EventHubName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">sqlxe</Value>
+    </Setting>
+    <Setting Name="EventHubConnectionString" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Endpoint=sb://simgreci.servicebus.windows.net/;SharedAccessKeyName=write_only;SharedAccessKey=Y+ZVz/kqRiiaDjIaOj9MSwi+57qXyGhn/GTtylTTDYM=</Value>
     </Setting>
   </Settings>
 </SettingsFile>
