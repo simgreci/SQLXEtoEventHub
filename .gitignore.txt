@@ -1,3 +1,8 @@
+SQLXEtoEventHub/obj/*
+SQLXEtoEventHub/bin/*
+
+SQLXEtoEventHub/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+
 *.vsp
 *.psess
 
