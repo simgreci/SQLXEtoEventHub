@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 
-namespace SQLXEtoEventHub
+namespace SQLXEtoEventHub.XEPosition
 {
-    public class PositionRegistryPersist
+    public class RegistryStore
     {
         protected const string KEY_PATH = "SOFTWARE";
         protected const string KEY_NODE = "SQLXEtoEventHub";
@@ -17,7 +17,7 @@ namespace SQLXEtoEventHub
 
         public string Trace { get; protected set; }
 
-        public PositionRegistryPersist(string traceName)
+        public RegistryStore(string traceName)
         {
             this.Trace = traceName;
         }

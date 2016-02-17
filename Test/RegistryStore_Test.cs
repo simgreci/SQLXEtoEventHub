@@ -1,23 +1,23 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SQLXEtoEventHub;
+using SQLXEtoEventHub.XEPosition;
 
 namespace Test
 {
     [TestClass]
-    public class PositionRegistryPersist_Test
+    public class RegistryStore_Test
     {
         [TestMethod]
         public void Create()
         {
-            PositionRegistryPersist prp = new PositionRegistryPersist("test");
+            RegistryStore prp = new RegistryStore("test");
             prp.Update(new XEPosition { LastFile = "LastFile", Offset = 2000 });
         }
 
         [TestMethod]
         public void CreateAndLoad()
         {
-            PositionRegistryPersist prp = new PositionRegistryPersist("test2");
+            RegistryStore prp = new RegistryStore("test2");
 
             var x = new XEPosition { LastFile = "MyLastFile", Offset = 2000 };
 
