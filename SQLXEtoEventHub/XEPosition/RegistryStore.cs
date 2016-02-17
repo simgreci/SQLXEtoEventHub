@@ -37,9 +37,9 @@ namespace SQLXEtoEventHub.XEPosition
         {
             var root = Registry.CurrentUser.OpenSubKey(KEY_PATH);
             var key = root.OpenSubKey(KEY_NODE);
-            if (key == null) return null;
+            if (key == null) return new XEPosition();
             var trace = key.OpenSubKey(Trace);
-            if (trace == null) return null;
+            if (trace == null) return new XEPosition();
 
             return new XEPosition
             {
