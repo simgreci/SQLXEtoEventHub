@@ -11,26 +11,6 @@ namespace SQLXEtoEventHub
     {
         static void Main(string[] args)
         {
-            SqlConnectionStringBuilder sb = new SqlConnectionStringBuilder();
-            sb.DataSource = "localhost";
-            sb.IntegratedSecurity = true;
-            SqlConnection conn = new SqlConnection(sb.ConnectionString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandTimeout = 0;
-            cmd.CommandType = System.Data.CommandType.Text;
-            cmd.CommandText = "SELECT type, data FROM sys.fn_MSxe_read_event_stream ('GetEvents', 0)";
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                var b = reader[1] as byte[];
-                int i = b.Length;
-                if (i < 16)
-                    continue;
-                var s = System.Text.Encoding.Unicode.GetString(b, 128, b.Length- 128);
-                Console.WriteLine(s);
-            }
         }
     }
 }
