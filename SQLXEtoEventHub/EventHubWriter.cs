@@ -4,19 +4,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
 
 namespace SQLXEtoEventHub
 {
     public class EventHubWriter
     {
-        static string eventHubName = "{event hub name}";
-        static string connectionString = "{send connection string}";
-
         protected EventHubClient client;
 
-        public EventHubWriter()
+        public string EventHubName { get; private set;  }
+        public string ConnectionString { get; private set; }
+
+        public EventHubWriter(string EventHubName, string ConnectionString)
         {
-            client = EventHubClient.CreateFromConnectionString(connectionString, eventHubName);
+            this.EventHubName = EventHubName;
+            this.ConnectionString = ConnectionString;
+
+            client = EventHubClient.CreateFromConnectionString(ConnectionString, EventHubName);
+        }
+
+        public static string Serialize(object o)
+        {
+            System.IO.StringWriter wr = new System.IO.StringWriter();
+            JsonSerializer ser = new JsonSerializer();
+            ser.Serialize(wr, o);
+            wr.Flush();
+
+            return wr.ToString();
+        }
+
+        public void Send(object o)
+        {            
+            Send(Serialize(o));
         }
 
         public void Send(string text)

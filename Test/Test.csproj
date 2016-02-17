@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="RegistryStore_Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EventHubWriter_Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SQLXEtoEventHub\SQLXEtoEventHub.csproj">
