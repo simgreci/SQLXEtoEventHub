@@ -9,7 +9,7 @@ namespace SQLXEtoEventHub
 {
     public class PositionRegistryPersist
     {
-        protected const string KEY_PATH = "Software";
+        protected const string KEY_PATH = "SOFTWARE";
         protected const string KEY_NODE = "SQLXEtoEventHub";
 
         protected const string LASTFILE = "LastFile";
@@ -24,8 +24,9 @@ namespace SQLXEtoEventHub
 
         public void Update(XEPosition pos)
         {
-            var root = Registry.CurrentUser.OpenSubKey(KEY_PATH);
-            var key = root.CreateSubKey(KEY_NODE);
+            var root = Registry.CurrentUser.OpenSubKey(KEY_PATH, RegistryKeyPermissionCheck.ReadWriteSubTree);
+            var key = root.CreateSubKey(KEY_NODE, RegistryKeyPermissionCheck.ReadWriteSubTree);
+            if (key == null) throw new UnauthorizedAccessException("Registry key not created. Please run the installer or create it manually");
             var trace = key.CreateSubKey(Trace);
 
             trace.SetValue(LASTFILE, pos.LastFile, RegistryValueKind.String);
