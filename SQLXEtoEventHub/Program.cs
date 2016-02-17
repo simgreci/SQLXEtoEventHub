@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using SQLXEtoEventHub.XEPosition;
+using System.Configuration;
+using SQLXEtoEventHub.Properties;
 
 namespace SQLXEtoEventHub
 {
@@ -15,13 +17,12 @@ namespace SQLXEtoEventHub
 
         static void Main(string[] args)
         {
+            Settings s = new Settings();
             log4net.Config.XmlConfigurator.Configure(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SQLXEtoEventHub.log4net.xml"));
 
-            RegistryStore rs = new RegistryStore(System.Configuration.ConfigurationManager.AppSettings["EventHubName"]);
-            EventConsumer ec = new EventConsumer(System.Configuration.ConfigurationManager.ConnectionStrings["SQLServerConnectionString"].ConnectionString);
-            EventHubWriter ehw = new EventHubWriter(
-                System.Configuration.ConfigurationManager.AppSettings["EventHubName"],
-                System.Configuration.ConfigurationManager.AppSettings["EventHubConnectionString"]);
+            RegistryStore rs = new RegistryStore(s.EventHubName);
+            EventConsumer ec = new EventConsumer(s.SQLServerConnectionString);
+            EventHubWriter ehw = new EventHubWriter(s.EventHubName,s.EventHubConnectionString);
 
             XEPosition.XEPosition pos = new XEPosition.XEPosition() { LastFile = string.Empty, Offset = 0 };
 
