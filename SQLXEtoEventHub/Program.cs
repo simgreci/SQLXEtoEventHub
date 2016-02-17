@@ -22,9 +22,12 @@ namespace SQLXEtoEventHub
             cmd.CommandType = System.Data.CommandType.Text;
             cmd.CommandText = "SELECT type, data FROM sys.fn_MSxe_read_event_stream ('GetEvents', 0)";
             var reader = cmd.ExecuteReader();
-            while(reader.Read())
+            while (reader.Read())
             {
-                Console.WriteLine(reader[1].ToString());
+                var b = reader[1] as byte[];
+                var s = System.Text.Encoding.Unicode.GetString(b);
+                Console.WriteLine(s);
+
             }
         }
     }
