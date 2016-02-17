@@ -25,9 +25,11 @@ namespace SQLXEtoEventHub
             while (reader.Read())
             {
                 var b = reader[1] as byte[];
-                var s = System.Text.Encoding.Unicode.GetString(b);
+                int i = b.Length;
+                if (i < 16)
+                    continue;
+                var s = System.Text.Encoding.Unicode.GetString(b, 128, b.Length- 128);
                 Console.WriteLine(s);
-
             }
         }
     }
