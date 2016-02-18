@@ -4,6 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Xml;
 using System.Xml.Linq;
+using SQLXEtoEventHub.XEvent;
+using SQLXEtoEventHub.Store;
 
 namespace SQLXEtoEventHub
 {
@@ -15,27 +17,27 @@ namespace SQLXEtoEventHub
 
         public SqlConnection DBConnection { get; private set; }
 
-        public XEPosition.RegistryStore RegistryStore { get; set; }
+        public IStore Store { get; set; }
 
-        public EventConsumer(SqlConnection conn, string XELPath, XEPosition.RegistryStore RegistryStore)
+        public EventConsumer(SqlConnection connection, string XELPath, IStore Store)
         {
-            this.DBConnection = DBConnection;
+            this.DBConnection = connection;
             this.XELPath = string.Concat(XELPath, "\\*");
-            this.RegistryStore = RegistryStore;
+            this.Store = Store;
         }
 
         public List<XEPayload> GetLastEvents()
         {
-            XEPosition.XEPosition pos;
+            XEPosition pos;
             #region Read from registry
             try
             {
-                pos = RegistryStore.Read();
+                pos = Store.Read();
             }
             catch (Exception exce)
             {
                 log.WarnFormat("Key missing? {0:S}", exce.Message);
-                pos = new XEPosition.XEPosition();
+                pos = new XEPosition();
             }
             #endregion
 
@@ -82,8 +84,8 @@ namespace SQLXEtoEventHub
 
                     while (reader.Read())
                     {
-                        XEvent e = new XEvent();
-                        XEPosition.XEPosition posInner = new XEPosition.XEPosition() {
+                        XEvent.XEvent e = new XEvent.XEvent();
+                        XEPosition posInner = new XEPosition() {
                             LastFile = reader["file_name"].ToString(),
                             Offset = Convert.ToInt32(reader["file_offset"]) };
 
@@ -116,9 +118,9 @@ namespace SQLXEtoEventHub
             #endregion
         }
 
-        public void CheckpointPosition(XEPosition.XEPosition pos)
+        public void CheckpointPosition(XEPosition pos)
         {
-            RegistryStore.Update(pos);
+            Store.Update(pos);
         }
     }
 }

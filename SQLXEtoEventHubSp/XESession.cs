@@ -11,7 +11,7 @@ namespace SQLXEtoEventHubSp
         public string Name { get; private set; }
         public string FilePath { get; private set; }
 
-        public void XESession(string name, string filePath)
+        public XESession(string name, string filePath)
         {
             this.Name = name;
             this.FilePath = filePath;

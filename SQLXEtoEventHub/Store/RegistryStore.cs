@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using SQLXEtoEventHub.XEvent;
 
-namespace SQLXEtoEventHub.XEPosition
+namespace SQLXEtoEventHub.Store
 {
-    public class RegistryStore
+    public class RegistryStore : IStore
     {
         protected const string KEY_PATH = "SOFTWARE";
         protected const string KEY_NODE = "SQLXEtoEventHub";

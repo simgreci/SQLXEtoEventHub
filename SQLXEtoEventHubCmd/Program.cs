@@ -1,8 +1,9 @@
 ﻿using System;
 using SQLXEtoEventHub;
-using SQLXEtoEventHub.XEPosition;
+using SQLXEtoEventHub.XEvent;
 using log4net;
 using System.Data.SqlClient;
+using SQLXEtoEventHub.Store;
 
 namespace SQLXEtoEventHubCmd
 {

@@ -22,7 +22,7 @@ namespace SQLXEtoEventHubSp
 
         public static XESession GetTraceDetails(string traceName)
         {
-
+            return null;
         }
     }
 }

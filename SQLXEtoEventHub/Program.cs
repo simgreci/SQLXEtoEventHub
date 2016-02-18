@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
-using SQLXEtoEventHub.XEPosition;
 using System.Configuration;
 using SQLXEtoEventHub.Properties;
+using SQLXEtoEventHub.XEvent;
+using SQLXEtoEventHub.Store;
 
 namespace SQLXEtoEventHub
 {
