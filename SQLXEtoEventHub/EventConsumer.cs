@@ -11,6 +11,8 @@ namespace SQLXEtoEventHub
 {
     public class EventConsumer
     {
+        public const string HT_SQL_SERVER_NAME = "SQLXEtoEventHub_SQLServer_Name";
+        public const string HT_SQL_SERVER_VERSION = "SQLXEtoEventHub_SQLServer_Version";
         public const string HT_NAME = "SQLXEtoEventHub_name";
         public const string HT_EVENT_TIME = "SQLXEtoEventHub_event_time";
 
@@ -48,6 +50,20 @@ namespace SQLXEtoEventHub
             using (this.DBConnection)
             {
                 DBConnection.Open();
+
+                string sqlServerName;
+                string sqlServerVersion;
+
+                using (SqlCommand cmd = new SqlCommand("SELECT @@SERVERNAME, @@VERSION", DBConnection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        reader.Read();
+                        sqlServerName = reader.GetString(0);
+                        sqlServerVersion = reader.GetString(1);
+                    }
+                }
+
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     cmd.Connection = this.DBConnection;
@@ -83,7 +99,15 @@ namespace SQLXEtoEventHub
                     cmd.Parameters.Add(offsetParam);
 
                     SqlDataReader reader = cmd.ExecuteReader();
-                    return ParsePayloads(reader);
+                    var payloads = ParsePayloads(reader);
+
+                    System.Threading.Tasks.Parallel.ForEach(payloads, (pl) =>
+                    {
+                        pl.HashTable[HT_SQL_SERVER_NAME] = sqlServerName;
+                        pl.HashTable[HT_SQL_SERVER_VERSION] = sqlServerVersion;
+                    });
+
+                    return payloads;
                 }
             }
             #endregion

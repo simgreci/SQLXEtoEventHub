@@ -86,7 +86,6 @@
     <Compile Include="XEvent\XEPayload.cs" />
     <Compile Include="Store\IStore.cs" />
     <Compile Include="Store\RegistryStore.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XEvent\XEPosition.cs" />
   </ItemGroup>
