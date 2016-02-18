@@ -37,8 +37,6 @@ namespace SQLXEtoEventHub
             EventConsumer ec = new EventConsumer(s.SQLServerConnectionString, s.XELPath, rs);
             EventHubWriter ehw = new EventHubWriter(s.EventHubName, _EventHubConnectionString);
 
-            XEPosition.XEPosition pos = new XEPosition.XEPosition() { LastFile = string.Empty, Offset = 0 };
-
             var events = ec.GetLastEvents();
 
             try

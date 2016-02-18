@@ -30,6 +30,11 @@ namespace SQLXEtoEventHub.XEPosition
         {
             return LastFile.GetHashCode() ^ Offset.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return this.GetType().Name + string.Format("[LastFile=\"{0:S}\", Offset={1:N0}]", LastFile, Offset);
+        }
     }
 
 }
