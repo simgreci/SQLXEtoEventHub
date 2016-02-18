@@ -15,8 +15,5 @@
     <Setting Name="EventHubName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">sqlxe</Value>
     </Setting>
-    <Setting Name="EventHubConnectionString" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Endpoint=sb://simgreci.servicebus.windows.net/;SharedAccessKeyName=write_only;SharedAccessKey=Y+ZVz/kqRiiaDjIaOj9MSwi+57qXyGhn/GTtylTTDYM=</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

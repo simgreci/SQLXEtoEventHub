@@ -50,15 +50,5 @@ namespace SQLXEtoEventHub.Properties {
                 return ((string)(this["EventHubName"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Endpoint=sb://simgreci.servicebus.windows.net/;SharedAccessKeyName=write_only;Sha" +
-            "redAccessKey=Y+ZVz/kqRiiaDjIaOj9MSwi+57qXyGhn/GTtylTTDYM=")]
-        public string EventHubConnectionString {
-            get {
-                return ((string)(this["EventHubConnectionString"]));
-            }
-        }
     }
 }
