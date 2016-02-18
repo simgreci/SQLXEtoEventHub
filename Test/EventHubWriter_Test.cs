@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SQLXEtoEventHub.XEPosition;
 using SQLXEtoEventHub;
+using SQLXEtoEventHub.XEvent;
 
 namespace Test
 {

@@ -4,6 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Xml;
 using System.Xml.Linq;
+using SQLXEtoEventHub.XEvent;
+using SQLXEtoEventHub.Store;
 
 namespace SQLXEtoEventHub
 {
@@ -15,9 +17,9 @@ namespace SQLXEtoEventHub
 
         public string ConnectionString { get; private set; }
 
-        public XEPosition.IStore Store { get; set; }
+        public IStore Store { get; set; }
 
-        public EventConsumer(string ConnectionString, string XELPath, XEPosition.IStore Store)
+        public EventConsumer(string ConnectionString, string XELPath, IStore Store)
         {
             this.ConnectionString = ConnectionString;
             this.XELPath = string.Concat(XELPath, "\\*");
@@ -26,7 +28,7 @@ namespace SQLXEtoEventHub
 
         public List<XEPayload> GetLastEvents()
         {
-            XEPosition.XEPosition pos;
+            XEPosition pos;
             #region Read from registry
             try
             {
@@ -35,7 +37,7 @@ namespace SQLXEtoEventHub
             catch (Exception exce)
             {
                 log.WarnFormat("Key missing? {0:S}", exce.Message);
-                pos = new XEPosition.XEPosition();
+                pos = new XEPosition();
             }
             #endregion
 
@@ -82,8 +84,8 @@ namespace SQLXEtoEventHub
 
                     while (reader.Read())
                     {
-                        XEvent e = new XEvent();
-                        XEPosition.XEPosition posInner = new XEPosition.XEPosition() {
+                        XEvent.XEvent e = new XEvent.XEvent();
+                        XEPosition posInner = new XEPosition() {
                             LastFile = reader["file_name"].ToString(),
                             Offset = Convert.ToInt32(reader["file_offset"]) };
 
@@ -116,7 +118,7 @@ namespace SQLXEtoEventHub
             #endregion
         }
 
-        public void CheckpointPosition(XEPosition.XEPosition pos)
+        public void CheckpointPosition(XEPosition pos)
         {
             Store.Update(pos);
         }

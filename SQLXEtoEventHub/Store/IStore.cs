@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLXEtoEventHub.XEPosition
+namespace SQLXEtoEventHub.Store
 {
     public interface IStore
     {
-        void Update(XEPosition pos);
-        XEPosition Read();
+        void Update(XEvent.XEPosition pos);
+        XEvent.XEPosition Read();
     }
 }
