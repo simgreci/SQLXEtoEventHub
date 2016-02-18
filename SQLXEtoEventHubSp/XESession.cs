@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SQLXEtoEventHubSp
 {
-    public class XETrace
+    public class XESession
     {
         public string Name { get; private set; }
         public string FilePath { get; private set; }
