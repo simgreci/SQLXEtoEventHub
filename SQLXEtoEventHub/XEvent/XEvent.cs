@@ -12,6 +12,8 @@ namespace SQLXEtoEventHub.XEvent
         {
         }
 
+        public string Name { get; set; }
+
         public string ErrorMessage { get; set; }
         public Int32 ErrorNumber { get; set; }
         public Int16 ErrorSeverity { get; set; }
@@ -20,13 +22,14 @@ namespace SQLXEtoEventHub.XEvent
 
         public override string ToString()
         {
-            return string.Format("{0:S}[ErrorMessage=\"{1:S}\", ErrorNumber={2:N0}, ErrorSeverity={3:N0}, UserName=\"{4:S}\", TimeStamp={5:S}]",
+            return string.Format("{0:S}[ErrorMessage=\"{1:S}\", ErrorNumber={2:N0}, ErrorSeverity={3:N0}, UserName=\"{4:S}\", TimeStamp={5:S}, Name=\"{6:S}\"]",
                 GetType().Name,
                 ErrorMessage,
                 ErrorNumber,
                 ErrorSeverity,
                 UserName,
-                EventTime.ToString()
+                EventTime.ToString(),
+                Name
                 );
         }
     }

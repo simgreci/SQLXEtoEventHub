@@ -55,7 +55,7 @@ namespace SQLXEtoEventHub
                     var pathParam = new SqlParameter("path", SqlDbType.NVarChar, 4000);
                     pathParam.Value = XELPath;
 
-                    SqlParameter fileParam;                
+                    SqlParameter fileParam;
                     if (pos.LastFile.Equals(String.Empty))
                     {
                         fileParam = new SqlParameter("file", DBNull.Value);
@@ -80,43 +80,54 @@ namespace SQLXEtoEventHub
                     cmd.Parameters.Add(offsetParam);
 
                     SqlDataReader reader = cmd.ExecuteReader();
-                    List<XEPayload> payloads = new List<XEPayload>();
-
-                    while (reader.Read())
-                    {
-                        XEvent.XEvent e = new XEvent.XEvent();
-                        XEPosition posInner = new XEPosition() {
-                            LastFile = reader["file_name"].ToString(),
-                            Offset = Convert.ToInt32(reader["file_offset"]) };
-
-                        XmlDocument doc = new XmlDocument();
-                        doc.LoadXml(reader["event_data"].ToString());
-
-                        e.EventTime = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
-
-                        foreach (XmlNode node in doc.SelectNodes("/event/data"))
-                        {
-                            switch (node.Attributes[0].Value)
-                            {
-                                case "error_number":
-                                    e.ErrorNumber = Convert.ToInt32(node.LastChild.InnerText);
-                                    break;
-                                case "message":
-                                    e.ErrorMessage = node.LastChild.InnerText;
-                                    break;
-                                case "severity":
-                                    e.ErrorSeverity = Convert.ToInt16(node.LastChild.InnerText);
-                                    break;
-                            }
-                        }
-
-                        payloads.Add(new XEPayload() { Event = e, Position = posInner });
-                    }
-                    return payloads;
+                    return ParsePayloads(reader);
                 }
             }
             #endregion
         }
+
+        protected static List<XEPayload> ParsePayloads(SqlDataReader reader)
+        {
+            List<XEPayload> payloads = new List<XEPayload>();
+
+            while (reader.Read())
+            {
+                XEvent.XEvent e = new XEvent.XEvent();
+                e.Name = reader.GetString(2);
+
+                XEPosition posInner = new XEPosition()
+                {
+                    LastFile = reader.GetString(4),
+                    Offset = reader.GetInt64(5)
+                };
+
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(reader["event_data"].ToString());
+
+                e.EventTime = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
+
+                foreach (XmlNode node in doc.SelectNodes("/event/data"))
+                {
+                    switch (node.Attributes[0].Value)
+                    {
+                        case "error_number":
+                            e.ErrorNumber = Convert.ToInt32(node.LastChild.InnerText);
+                            break;
+                        case "message":
+                            e.ErrorMessage = node.LastChild.InnerText;
+                            break;
+                        case "severity":
+                            e.ErrorSeverity = Convert.ToInt16(node.LastChild.InnerText);
+                            break;
+                    }
+                }
+
+                payloads.Add(new XEPayload() { Event = e, Position = posInner });
+            }
+
+            return payloads;
+        }
+
 
         public void CheckpointPosition(XEPosition pos)
         {
