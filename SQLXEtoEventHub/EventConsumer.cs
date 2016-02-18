@@ -15,13 +15,13 @@ namespace SQLXEtoEventHub
 
         public string ConnectionString { get; private set; }
 
-        public XEPosition.RegistryStore RegistryStore { get; set; }
+        public XEPosition.IStore Store { get; set; }
 
-        public EventConsumer(string ConnectionString, string XELPath, XEPosition.RegistryStore RegistryStore)
+        public EventConsumer(string ConnectionString, string XELPath, XEPosition.IStore Store)
         {
             this.ConnectionString = ConnectionString;
             this.XELPath = string.Concat(XELPath, "\\*");
-            this.RegistryStore = RegistryStore;
+            this.Store = Store;
         }
 
         public List<XEPayload> GetLastEvents()
@@ -30,7 +30,7 @@ namespace SQLXEtoEventHub
             #region Read from registry
             try
             {
-                pos = RegistryStore.Read();
+                pos = Store.Read();
             }
             catch (Exception exce)
             {
@@ -118,7 +118,7 @@ namespace SQLXEtoEventHub
 
         public void CheckpointPosition(XEPosition.XEPosition pos)
         {
-            RegistryStore.Update(pos);
+            Store.Update(pos);
         }
     }
 }

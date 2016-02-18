@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="XEPayload.cs" />
+    <Compile Include="XEPosition\IStore.cs" />
     <Compile Include="XEPosition\RegistryStore.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

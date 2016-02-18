@@ -7,7 +7,7 @@ using Microsoft.Win32;
 
 namespace SQLXEtoEventHub.XEPosition
 {
-    public class RegistryStore
+    public class RegistryStore : IStore
     {
         protected const string KEY_PATH = "SOFTWARE";
         protected const string KEY_NODE = "SQLXEtoEventHub";
