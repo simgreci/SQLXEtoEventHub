@@ -13,13 +13,13 @@ namespace SQLXEtoEventHub
 
         public string XELPath { get; protected set; }
 
-        public string ConnectionString { get; private set; }
+        public SqlConnection DBConnection { get; private set; }
 
         public XEPosition.RegistryStore RegistryStore { get; set; }
 
-        public EventConsumer(string ConnectionString, string XELPath, XEPosition.RegistryStore RegistryStore)
+        public EventConsumer(SqlConnection conn, string XELPath, XEPosition.RegistryStore RegistryStore)
         {
-            this.ConnectionString = ConnectionString;
+            this.DBConnection = DBConnection;
             this.XELPath = string.Concat(XELPath, "\\*");
             this.RegistryStore = RegistryStore;
         }
@@ -40,12 +40,12 @@ namespace SQLXEtoEventHub
             #endregion
 
             #region Data retrieval
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            using (this.DBConnection)
             {
-                conn.Open();
+                DBConnection.Open();
                 using (SqlCommand cmd = new SqlCommand())
                 {
-                    cmd.Connection = conn;
+                    cmd.Connection = this.DBConnection;
                     cmd.CommandTimeout = 0;
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandText = "select * from sys.fn_xe_file_target_read_file(@path,null,@file,@offset) a";

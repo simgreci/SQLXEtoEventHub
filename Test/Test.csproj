@@ -57,9 +57,9 @@
     <Compile Include="EventHubWriter_Test.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQLXEtoEventHub\SQLXEtoEventHub.csproj">
+    <ProjectReference Include="..\SQLXEtoEventHub\SQLXEtoEventHubLib.csproj">
       <Project>{9aa4ca05-81a5-435e-8aa9-20d8f33c3c31}</Project>
-      <Name>SQLXEtoEventHub</Name>
+      <Name>SQLXEtoEventHubLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
