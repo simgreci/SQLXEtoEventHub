@@ -16,7 +16,7 @@ namespace SQLXEtoEventHub
         public Int32 ErrorNumber { get; set; }
         public Int16 ErrorSeverity { get; set; }
         public string UserName { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public DateTime EventTime { get; set; }
 
         public override string ToString()
         {
@@ -26,7 +26,7 @@ namespace SQLXEtoEventHub
                 ErrorNumber,
                 ErrorSeverity,
                 UserName,
-                TimeStamp.ToString()
+                EventTime.ToString()
                 );
         }
     }

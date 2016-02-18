@@ -11,9 +11,6 @@ namespace SQLXEtoEventHub
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(EventConsumer));
 
-        private string _lastFile = String.Empty;
-        public Int32 _offset = 0;
-
         public string XELPath { get; protected set; }
 
         public string ConnectionString { get; private set; }
@@ -25,22 +22,6 @@ namespace SQLXEtoEventHub
             this.ConnectionString = ConnectionString;
             this.XELPath = string.Concat(XELPath, "\\*");
             this.RegistryStore = RegistryStore;
-        }
-
-        public string LastFile
-        {
-            get
-            {
-                return _lastFile;
-            }
-        }
-
-        public Int32 Offset
-        {
-            get
-            {
-                return _offset;
-            }
         }
 
         public List<XEPayload> GetLastEvents()
@@ -73,7 +54,7 @@ namespace SQLXEtoEventHub
                     pathParam.Value = XELPath;
 
                     SqlParameter fileParam;                
-                    if (_lastFile.Equals(String.Empty))
+                    if (pos.LastFile.Equals(String.Empty))
                     {
                         fileParam = new SqlParameter("file", DBNull.Value);
                     }
@@ -83,7 +64,7 @@ namespace SQLXEtoEventHub
                     }
 
                     SqlParameter offsetParam;
-                    if (_offset.Equals(0))
+                    if (pos.Offset.Equals(0))
                     {
                         offsetParam = new SqlParameter("offset", DBNull.Value);
                     }
@@ -101,15 +82,15 @@ namespace SQLXEtoEventHub
 
                     while (reader.Read())
                     {
-                        _lastFile = reader["file_name"].ToString();
-                        _offset = Convert.ToInt32(reader["file_offset"]);
                         XEvent e = new XEvent();
-                        XEPosition.XEPosition posInner = new XEPosition.XEPosition() { LastFile = _lastFile, Offset = _offset };
+                        XEPosition.XEPosition posInner = new XEPosition.XEPosition() {
+                            LastFile = reader["file_name"].ToString(),
+                            Offset = Convert.ToInt32(reader["file_offset"]) };
 
                         XmlDocument doc = new XmlDocument();
                         doc.LoadXml(reader["event_data"].ToString());
 
-                        e.TimeStamp = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
+                        e.EventTime = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
 
                         foreach (XmlNode node in doc.SelectNodes("/event/data"))
                         {
