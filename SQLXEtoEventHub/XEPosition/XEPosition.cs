@@ -11,6 +11,12 @@ namespace SQLXEtoEventHub.XEPosition
         public string LastFile { get; set; }
         public long Offset { get; set; }
 
+        public XEPosition()
+        {
+            LastFile = string.Empty;
+            Offset = 0;
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is XEPosition))

@@ -79,6 +79,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="XEPayload.cs" />
     <Compile Include="XEPosition\RegistryStore.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,7 +95,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="log4net.xml" />
+    <EmbeddedResource Include="log4net.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

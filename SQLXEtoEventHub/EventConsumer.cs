@@ -9,14 +9,22 @@ namespace SQLXEtoEventHub
 {
     public class EventConsumer
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(EventConsumer));
+
         private string _lastFile = String.Empty;
         public Int32 _offset = 0;
 
+        public string XELPath { get; protected set; }
+
         public string ConnectionString { get; private set; }
 
-        public EventConsumer(string ConnectionString)
+        public XEPosition.RegistryStore RegistryStore { get; set; }
+
+        public EventConsumer(string ConnectionString, string XELPath, XEPosition.RegistryStore RegistryStore)
         {
             this.ConnectionString = ConnectionString;
+            this.XELPath = string.Concat(XELPath, "\\*");
+            this.RegistryStore = RegistryStore;
         }
 
         public string LastFile
@@ -35,13 +43,22 @@ namespace SQLXEtoEventHub
             }
         }
 
-        public List<XEvent> GetLastEvents(XEPosition.XEPosition pos)
+        public List<XEPayload> GetLastEvents()
         {
-            return GetLastEvents(pos.LastFile, pos.Offset);
-        }
+            XEPosition.XEPosition pos;
+            #region Read from registry
+            try
+            {
+                pos = RegistryStore.Read();
+            }
+            catch (Exception exce)
+            {
+                log.WarnFormat("Key missing? {0:S}", exce.Message);
+                pos = new XEPosition.XEPosition();
+            }
+            #endregion
 
-        public List<XEvent> GetLastEvents(string file, long offset)
-        {
+            #region Data retrieval
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 conn.Open();
@@ -50,16 +67,19 @@ namespace SQLXEtoEventHub
                     cmd.Connection = conn;
                     cmd.CommandTimeout = 0;
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = "select * from sys.fn_xe_file_target_read_file('C:\\SqlServer\\output\\*',null,@file,@offset) a";
+                    cmd.CommandText = "select * from sys.fn_xe_file_target_read_file(@path,null,@file,@offset) a";
 
-                    SqlParameter fileParam;
+                    var pathParam = new SqlParameter("path", SqlDbType.NVarChar, 4000);
+                    pathParam.Value = XELPath;
+
+                    SqlParameter fileParam;                
                     if (_lastFile.Equals(String.Empty))
                     {
                         fileParam = new SqlParameter("file", DBNull.Value);
                     }
                     else
                     {
-                        fileParam = new SqlParameter("file", file);
+                        fileParam = new SqlParameter("file", pos.LastFile);
                     }
 
                     SqlParameter offsetParam;
@@ -69,21 +89,22 @@ namespace SQLXEtoEventHub
                     }
                     else
                     {
-                        offsetParam = new SqlParameter("offset", offset);
+                        offsetParam = new SqlParameter("offset", pos.Offset);
                     }
 
-
+                    cmd.Parameters.Add(pathParam);
                     cmd.Parameters.Add(fileParam);
                     cmd.Parameters.Add(offsetParam);
 
                     SqlDataReader reader = cmd.ExecuteReader();
-                    List<XEvent> events = new List<XEvent>();
+                    List<XEPayload> payloads = new List<XEPayload>();
 
                     while (reader.Read())
                     {
                         _lastFile = reader["file_name"].ToString();
                         _offset = Convert.ToInt32(reader["file_offset"]);
                         XEvent e = new XEvent();
+                        XEPosition.XEPosition posInner = new XEPosition.XEPosition() { LastFile = _lastFile, Offset = _offset };
 
                         XmlDocument doc = new XmlDocument();
                         doc.LoadXml(reader["event_data"].ToString());
@@ -106,11 +127,17 @@ namespace SQLXEtoEventHub
                             }
                         }
 
-                        events.Add(e);
+                        payloads.Add(new XEPayload() { Event = e, Position = posInner });
                     }
-                    return events;
+                    return payloads;
                 }
             }
+            #endregion
+        }
+
+        public void CheckpointPosition(XEPosition.XEPosition pos)
+        {
+            RegistryStore.Update(pos);
         }
     }
 }

@@ -20,6 +20,10 @@ namespace SQLXEtoEventHub
 
         static int Main(string[] args)
         {
+
+            Settings s = new Settings();
+            log4net.Config.XmlConfigurator.Configure(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SQLXEtoEventHub.log4net.xml"));
+
             #region Read event hub connection string from env variables
             _EventHubConnectionString = Environment.GetEnvironmentVariable(EH_ENV);
             if (string.IsNullOrEmpty(_EventHubConnectionString))
@@ -29,36 +33,32 @@ namespace SQLXEtoEventHub
             }
             #endregion
 
-            Settings s = new Settings();
-            log4net.Config.XmlConfigurator.Configure(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SQLXEtoEventHub.log4net.xml"));
-
             RegistryStore rs = new RegistryStore(s.EventHubName);
-            EventConsumer ec = new EventConsumer(s.SQLServerConnectionString);
+            EventConsumer ec = new EventConsumer(s.SQLServerConnectionString, s.XELPath, rs);
             EventHubWriter ehw = new EventHubWriter(s.EventHubName, _EventHubConnectionString);
 
             XEPosition.XEPosition pos = new XEPosition.XEPosition() { LastFile = string.Empty, Offset = 0 };
 
+            var events = ec.GetLastEvents();
+
             try
             {
-                pos = rs.Read();
+                foreach (XEPayload pl in events)
+                {
+                    log.DebugFormat("Sending event {0:S}", pl.Event);
+                    ehw.Send(pl.Event);
+
+                    log.DebugFormat("Chechpointing position {0:S}", pl.Position);
+                    ec.CheckpointPosition(pl.Position);
+                }
             }
-            catch (Exception exce)
+            catch(Exception exce)
             {
-                log.WarnFormat("Key missing? {0:S}", exce.Message);
+                log.ErrorFormat("{0:S}", exce.Message);
+                return -234;
             }
 
-            var events = ec.GetLastEvents(pos);
-
-            var lastEvent = events.Last();
-
-            //pos = new XEPosition.XEPosition { LastFile = lastEvent. } TODO!
-
-            foreach (XEvent e in events)
-            {
-                ehw.Send(e);
-            }
-            //Parallel.ForEach(events, (e) => { ehw.Send(e); });
-
+            log.Info("Processing completed.");
             return 0;
         }
     }
