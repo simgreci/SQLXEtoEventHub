@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLXEtoEventHubLib", "SQLXEtoEventHub\SQLXEtoEventHubLib.csproj", "{9AA4CA05-81A5-435E-8AA9-20D8F33C3C31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{BFEE682A-EAE3-4E86-813D-DD218B23412F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLXEtoEventHubTest", "Test\SQLXEtoEventHubTest.csproj", "{BFEE682A-EAE3-4E86-813D-DD218B23412F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLXEtoEventHubSp", "SQLXEtoEventHubSp\SQLXEtoEventHubSp.csproj", "{7F54BE9F-349F-4017-92B5-BC9BB78AF6DC}"
 EndProject
