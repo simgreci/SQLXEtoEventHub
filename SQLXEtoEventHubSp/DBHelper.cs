@@ -17,6 +17,12 @@ namespace SQLXEtoEventHubSp
         }
         public static bool TraceExists(string traceName)
         {
+            using(SqlCommand cmd = new SqlCommand("", Connection))
+            {
+                cmd.CommandText = "";
+                cmd.CommandType = System.Data.CommandType.Text;
+
+            }
             return true;
         }
 
