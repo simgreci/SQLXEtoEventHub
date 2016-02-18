@@ -11,6 +11,9 @@ namespace SQLXEtoEventHub
 {
     public class EventConsumer
     {
+        public const string HT_NAME = "SQLXEtoEventHub_name";
+        public const string HT_EVENT_TIME = "SQLXEtoEventHub_event_time";
+
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(EventConsumer));
 
         public string XELPath { get; protected set; }
@@ -92,8 +95,7 @@ namespace SQLXEtoEventHub
 
             while (reader.Read())
             {
-                XEvent.XEvent e = new XEvent.XEvent();
-                e.Name = reader.GetString(2);
+                string eventName = reader.GetString(2);
 
                 XEPosition posInner = new XEPosition()
                 {
@@ -103,31 +105,47 @@ namespace SQLXEtoEventHub
 
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(reader["event_data"].ToString());
+                DateTime eventTime = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
 
-                e.EventTime = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
+                System.Collections.Hashtable ht = new System.Collections.Hashtable();
 
                 foreach (XmlNode node in doc.SelectNodes("/event/data"))
                 {
-                    switch (node.Attributes[0].Value)
-                    {
-                        case "error_number":
-                            e.ErrorNumber = Convert.ToInt32(node.LastChild.InnerText);
-                            break;
-                        case "message":
-                            e.ErrorMessage = node.LastChild.InnerText;
-                            break;
-                        case "severity":
-                            e.ErrorSeverity = Convert.ToInt16(node.LastChild.InnerText);
-                            break;
-                    }
+                    string name = node.Attributes["name"].Value;
+                    string value = node.SelectSingleNode("value").InnerText;
+
+                    AddTyped(ht, name, value);
                 }
 
-                payloads.Add(new XEPayload() { Event = e, Position = posInner });
+                foreach (XmlNode node in doc.SelectNodes("/event/action"))
+                {
+                    string name = string.Join("_", node.Attributes["package"].Value, node.Attributes["name"].Value);
+                    string value = node.SelectSingleNode("value").InnerText;
+
+                    AddTyped(ht, name, value);
+                }
+
+                ht[HT_NAME] = eventName;
+                ht[HT_EVENT_TIME] = eventTime;
+
+                payloads.Add(new XEPayload(ht, posInner));
             }
 
             return payloads;
         }
 
+        protected static void AddTyped(System.Collections.Hashtable ht, string name, string value)
+        {
+            long lVal;
+            if (long.TryParse(value, out lVal))
+            {
+                ht[name] = lVal;
+            }
+            else
+            {
+                ht[name] = value;
+            }
+        }
 
         public void CheckpointPosition(XEPosition pos)
         {

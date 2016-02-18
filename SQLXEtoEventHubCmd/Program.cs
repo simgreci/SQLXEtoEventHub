@@ -54,8 +54,8 @@ namespace SQLXEtoEventHubCmd
             {
                 foreach (XEPayload pl in events)
                 {
-                    log.DebugFormat("Sending event {0:S}", pl.Event);
-                    ehw.Send(pl.Event);
+                    log.DebugFormat("Sending event {0:S}", pl.HashTable);
+                    ehw.Send(pl.HashTable);
                     log.DebugFormat("Chechpointing position {0:S}", pl.Position);
                     ec.CheckpointPosition(pl.Position);
                 }

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SQLXEtoEventHub;
 using System.Data.SqlClient;
 using SQLXEtoEventHub.Store;
+using Newtonsoft.Json;
 
 namespace Test
 {
@@ -23,6 +24,12 @@ namespace Test
 
             var events = ec.GetLastEvents();
 
+            System.IO.StringWriter wr = new System.IO.StringWriter();
+            JsonSerializer ser = new JsonSerializer();
+            ser.Serialize(wr, events[0].HashTable);
+            wr.Flush();
+
+            string s = wr.ToString();
         }
     }
 }
