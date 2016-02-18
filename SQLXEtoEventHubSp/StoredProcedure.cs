@@ -14,6 +14,11 @@ namespace SQLXEtoEventHubSp
         [SqlProcedure()]
         public static void sp_send_xe_to_eventhub(string trace_name, string event_hub_connection, string event_hub_name)
         {
+            DBHelper helper = new DBHelper(new System.Data.SqlClient.SqlConnection("context"));
+            if(helper.XESessionExists(trace_name))
+            {
+
+            }
         }
     }
 }
