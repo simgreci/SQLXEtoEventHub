@@ -10,46 +10,46 @@ namespace SQLXEtoEventHubSp
 {
     public class DBHelper
     {
-        private SqlConnection Connection;
-
-        public DBHelper(SqlConnection conn)
+        public static bool XESessionExist(SqlConnection conn, string sessionName)
         {
-            this.Connection = conn;
-        }
-        public bool XESessionExist(string sessionName)
-        {
+            bool exists = false;
             using (SqlCommand cmd = new SqlCommand())
             {
-                cmd.Connection = this.Connection;
+                cmd.Connection = conn;
+                cmd.Parameters.Add(BuildSqlParam("session_name", sessionName));
                 cmd.CommandText = "select 1 from sys.dm_xe_sessions where name = @session_name";
                 cmd.CommandType = System.Data.CommandType.Text;
-                cmd.ExecuteScalar();
-                object o = cmd.ExecuteScalar();
-                if ((bool)o)
-                    return true;
-                else
-                    return false;
+                if (cmd.ExecuteScalar() != null)
+                    exists = true;
             }
+            return exists;
         }
 
-        public XESession GetSession(string sessionName)
+        public static XESession GetSession(SqlConnection conn, string sessionName)
         {
             using (SqlCommand cmd = new SqlCommand())
             {
                 cmd.Parameters.Add(BuildSqlParam("session_name", sessionName));
-                cmd.Connection = this.Connection;
-                cmd.CommandText = "SELECT 1 FROM ";
+                cmd.Connection = conn;
+                cmd.CommandText = @"select s.address, s.name, t.target_data 
+                                    from sys.dm_xe_sessions s
+                                    inner
+                                    join sys.dm_xe_session_targets t on s.address = t.event_session_address
+                                    where s.name = @session_name
+                                    and t.target_name = 'event_file'
+                                    ";
                 cmd.CommandType = System.Data.CommandType.Text;
+                SqlDataReader reader = cmd.ExecuteReader();
             }
-            return new XESession("","");
+            return null;
         }
 
-        private string ExtractXESessionFilePath(XmlDocument doc)
+        private static string ExtractXESessionFilePath(XmlDocument doc)
         {
             return String.Empty;
         }
 
-        private SqlParameter BuildSqlParam(string paramName, object value)
+        private static SqlParameter BuildSqlParam(string paramName, object value)
         {
             SqlParameter param = new SqlParameter();
             param.ParameterName = paramName;
