@@ -39,7 +39,7 @@ namespace SQLXEtoEventHubSp
                 cmd.CommandType = System.Data.CommandType.Text;
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (!reader.HasRows)
-                    throw new Exception(sessionName);
+                    throw new Exception(String.Format("Target type of event_file is required for session {0:S}", sessionName));
 
                 reader.Read();
 
