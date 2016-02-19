@@ -20,11 +20,11 @@ namespace SQLXEtoEventHub
 
         public string XELPath { get; protected set; }
 
-        public DatabaseContext DatabaseContext { get; private set; }
+        public IDatabaseContext DatabaseContext { get; private set; }
 
         public IStore Store { get; set; }
 
-        public EventConsumer(DatabaseContext context, string XELPath, IStore Store)
+        public EventConsumer(IDatabaseContext context, string XELPath, IStore Store)
         {
             this.DatabaseContext = context;
             this.XELPath = string.Concat(XELPath, "\\*");

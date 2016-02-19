@@ -11,7 +11,7 @@ namespace Test
         [TestMethod]
         public void XESessionExist()
         {
-            using (IDatabaseContext context = new DatabaseContext("Server = localhost; Trusted_Connection = True;"))
+            using (IDatabaseContext context = new DatabaseContext(TestParameters.CONNECTION_STRING))
             {
                 Assert.IsTrue(DBHelper.XESessionExist(context,"system_health"));
                 Assert.IsFalse(DBHelper.XESessionExist(context, "dummy_trace"));
@@ -21,11 +21,11 @@ namespace Test
         [TestMethod]
         public void XEGetSession()
         {
-            using (IDatabaseContext context = new DatabaseContext("Server = localhost; Trusted_Connection = True;"))
+            using (IDatabaseContext context = new DatabaseContext(TestParameters.CONNECTION_STRING))
             {
-                XESession session = DBHelper.GetSession(context, "GetEvents");
-                Assert.AreEqual<string>(session.Name, "GetEvents");
-                Assert.AreEqual<string>(session.FilePath, "C:\\SqlServer\\output");
+                XESession session = DBHelper.GetSession(context, TestParameters.XESESSION_NAME);
+                Assert.AreEqual<string>(session.Name, TestParameters.XESESSION_NAME);
+                Assert.AreEqual<string>(session.FilePath, TestParameters.XE_PATH);
             }
         }
     }

@@ -62,6 +62,7 @@
     <Compile Include="EventHubWriter_Test.cs" />
     <Compile Include="DBHelper_Test.cs" />
     <Compile Include="EventConsumer_Test.cs" />
+    <Compile Include="TestParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SQLXEtoEventHubSp\SQLXEtoEventHubSp.csproj">
