@@ -1,7 +1,9 @@
 ﻿using Microsoft.SqlServer.Server;
 using SQLXEtoEventHub;
 using SQLXEtoEventHub.Store;
+using SQLXEtoEventHub.XEvent;
 using System;
+using System.Collections.Generic;
 
 namespace SQLXEtoEventHubSp
 {   
@@ -22,14 +24,25 @@ namespace SQLXEtoEventHubSp
             if (SqlContext.IsAvailable)
             {
                 DatabaseContext context = new DatabaseContext("context connection = true");
-                if (DBHelper.XESessionExist(context, trace_name))
+                using (context)
                 {
-                    XESession session = DBHelper.GetSession(context, trace_name);
-                    RegistryStore rs = new RegistryStore(trace_name);
-                    EventConsumer c = new EventConsumer(context, session.FilePath, rs);
+                    if (DBHelper.XESessionExist(context, trace_name))
+                    {
+
+                        XESession session = DBHelper.GetSession(context, trace_name);
+                        RegistryStore rs = new RegistryStore(trace_name);
+                        EventConsumer c = new EventConsumer(context, session.FilePath, rs);
+                        List<SQLXEtoEventHub.XEvent.XEPayload> payloads = c.GetLastEvents();
+
+                        EventHubWriter writer = new EventHubWriter(event_hub_name, event_hub_connection);
+                        foreach (XEPayload p in payloads)
+                        {
+                            writer.Send(p);
+                        }
+                    }
+                    else
+                        throw new Exception(String.Format("Session {0:S} does not exists or is not running.", trace_name));
                 }
-                else
-                    throw new Exception(String.Format("Session {0:S} is not valid or ",""));
             }
         }
     }

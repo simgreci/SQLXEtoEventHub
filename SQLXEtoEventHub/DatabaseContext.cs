@@ -36,6 +36,8 @@ namespace SQLXEtoEventHub
         {
             if (_connection != null && _connection.State == ConnectionState.Open)
                 _connection.Close();
+
+            _connection.Dispose();
         }
     }
 }
