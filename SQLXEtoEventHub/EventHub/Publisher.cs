@@ -8,7 +8,6 @@ namespace SQLXEtoEventHub.EventHub
 {
     public class Publisher
     {
-
         public static string GenerateSignature(
             string policyName,
             string sasKey,
@@ -24,9 +23,11 @@ namespace SQLXEtoEventHub.EventHub
             System.Security.Cryptography.HMACSHA256 SHA256 = new System.Security.Cryptography.HMACSHA256(Convert.FromBase64String(sasKey));
             string strHash2Base64 = Convert.ToBase64String(SHA256.ComputeHash(bytesToSign));
 
+            string strSig = System.Net.WebUtility.UrlEncode(strHash2Base64);
+
             string sAuth = string.Format("SharedAccessSignature sr={0:S}&sig={1:S}&se={2:S}&skn={3:S}",
                 urlEncoded,
-                strHash2Base64,
+                strSig,
                 expiry,
                 policyName);
 
