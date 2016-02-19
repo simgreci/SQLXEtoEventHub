@@ -11,12 +11,12 @@ namespace SQLXEtoEventHubSp
         [SqlProcedure()]
         public static void sp_send_xe_to_eventhub(string trace_name, string event_hub_connection, string event_hub_name)
         {
-            if(DBHelper.XESessionExist(trace_name))
+            DatabaseContext context = new DatabaseContext("Server=localhost;Trusted_Connection=True;");
+            if(DBHelper.XESessionExist(context, trace_name))
             {
-                SqlConnection conn = new SqlConnection("Server=localhost;Trusted_Connection=True;");
-                XESession session = DBHelper.GetSession(trace_name);
+                XESession session = DBHelper.GetSession(context, trace_name);
                 RegistryStore rs = new RegistryStore(trace_name);
-                EventConsumer c = new EventConsumer(conn, session.FilePath, rs);
+                EventConsumer c = new EventConsumer(null, session.FilePath, rs);
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SQLXEtoEventHubSp;
-using System.Data.SqlClient;
+using SQLXEtoEventHub;
 
 namespace Test
 {
@@ -11,16 +11,22 @@ namespace Test
         [TestMethod]
         public void XESessionExist()
         {
-            Assert.IsTrue(DBHelper.XESessionExist("system_health"));
-            Assert.IsFalse(DBHelper.XESessionExist("dummy_trace"));
+            using (IDatabaseContext context = new DatabaseContext("Server = localhost; Trusted_Connection = True;"))
+            {
+                Assert.IsTrue(DBHelper.XESessionExist(context,"system_health"));
+                Assert.IsFalse(DBHelper.XESessionExist(context, "dummy_trace"));
+            }
         }
 
         [TestMethod]
         public void XEGetSession()
         {
-            XESession session = DBHelper.GetSession("GetEvents");
-            Assert.AreEqual<string>(session.Name, "GetEvents");
-            Assert.AreEqual<string>(session.FilePath, "C:\\SqlServer\\output");
+            using (IDatabaseContext context = new DatabaseContext("Server = localhost; Trusted_Connection = True;"))
+            {
+                XESession session = DBHelper.GetSession(context, "GetEvents");
+                Assert.AreEqual<string>(session.Name, "GetEvents");
+                Assert.AreEqual<string>(session.FilePath, "C:\\SqlServer\\output");
+            }
         }
     }
 }
