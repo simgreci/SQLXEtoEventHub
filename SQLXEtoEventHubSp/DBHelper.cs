@@ -27,25 +27,40 @@ namespace SQLXEtoEventHubSp
 
         public static XESession GetSession(SqlConnection conn, string sessionName)
         {
-            using (SqlCommand cmd = new SqlCommand())
+            using (conn)
             {
-                cmd.Parameters.Add(BuildSqlParam("session_name", sessionName));
-                cmd.Connection = conn;
-                cmd.CommandText = @"select s.address, s.name, t.target_data 
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.Parameters.Add(BuildSqlParam("session_name", sessionName));
+                    cmd.Connection = conn;
+                    cmd.CommandText = @"select s.address, s.name, t.target_data 
                                     from sys.dm_xe_sessions s
                                     inner
                                     join sys.dm_xe_session_targets t on s.address = t.event_session_address
                                     where s.name = @session_name
                                     and t.target_name = 'event_file'
                                     ";
-                cmd.CommandType = System.Data.CommandType.Text;
-                SqlDataReader reader = cmd.ExecuteReader();
+                    cmd.CommandType = System.Data.CommandType.Text;
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (!reader.HasRows)
+                        throw new Exception(sessionName);
+
+                    reader.Read();
+
+                    return new XESession(
+                        reader["name"].ToString(),
+                        ExtractXESessionFilePath(Convert.ToString(reader["target_data"]))
+                        );
+                }
             }
-            return null;
         }
 
-        private static string ExtractXESessionFilePath(XmlDocument doc)
+        private static string ExtractXESessionFilePath(string targetData)
         {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(targetData);
+            var s = doc.FirstChild.Attributes["name"];
             return String.Empty;
         }
 

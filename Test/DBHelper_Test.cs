@@ -23,5 +23,15 @@ namespace Test
                 Assert.IsFalse(DBHelper.XESessionExist(conn2, "dummy_trace"));
             }
         }
+
+        [TestMethod]
+        public void XEGetSession()
+        {
+            using (SqlConnection conn1 = new SqlConnection("Server=localhost;Trusted_Connection=True;"))
+            {
+                conn1.Open();
+                XESession session = DBHelper.GetSession(conn1, "GetEvents");
+            }
+        }
     }
 }
