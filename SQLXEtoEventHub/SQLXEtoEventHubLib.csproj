@@ -76,6 +76,7 @@
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="EventConsumer.cs" />
     <Compile Include="EventHubWriter.cs" />
+    <Compile Include="EventHub\Publisher.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
