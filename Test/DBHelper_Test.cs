@@ -11,29 +11,16 @@ namespace Test
         [TestMethod]
         public void XESessionExist()
         {
-            using (SqlConnection conn1 = new SqlConnection("Server=localhost;Trusted_Connection=True;"))
-            {
-                conn1.Open();
-                Assert.IsTrue(DBHelper.XESessionExist(conn1, "system_health"));
-            }
-
-            using (SqlConnection conn2 = new SqlConnection("Server=localhost;Trusted_Connection=True;"))
-            {
-                conn2.Open();
-                Assert.IsFalse(DBHelper.XESessionExist(conn2, "dummy_trace"));
-            }
+            Assert.IsTrue(DBHelper.XESessionExist("system_health"));
+            Assert.IsFalse(DBHelper.XESessionExist("dummy_trace"));
         }
 
         [TestMethod]
         public void XEGetSession()
         {
-            using (SqlConnection conn1 = new SqlConnection("Server=localhost;Trusted_Connection=True;"))
-            {
-                conn1.Open();
-                XESession session = DBHelper.GetSession(conn1, "GetEvents");
-                Assert.AreEqual<string>(session.Name, "GetEvents");
-                Assert.AreEqual<string>(session.FilePath, "C:\\SqlServer\\output");
-            }
+            XESession session = DBHelper.GetSession("GetEvents");
+            Assert.AreEqual<string>(session.Name, "GetEvents");
+            Assert.AreEqual<string>(session.FilePath, "C:\\SqlServer\\output");
         }
     }
 }
