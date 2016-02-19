@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Xml;
+using System.IO;
 
 namespace SQLXEtoEventHubSp
 {
@@ -60,8 +61,8 @@ namespace SQLXEtoEventHubSp
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(targetData);
-            var s = doc.FirstChild.Attributes["name"];
-            return String.Empty;
+            FileInfo f = new FileInfo(doc.SelectSingleNode("EventFileTarget/File").Attributes["name"].Value);
+            return f.DirectoryName;
         }
 
         private static SqlParameter BuildSqlParam(string paramName, object value)

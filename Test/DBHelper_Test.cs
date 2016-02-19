@@ -31,6 +31,8 @@ namespace Test
             {
                 conn1.Open();
                 XESession session = DBHelper.GetSession(conn1, "GetEvents");
+                Assert.AreEqual<string>(session.Name, "GetEvents");
+                Assert.AreEqual<string>(session.FilePath, "C:\\SqlServer\\output");
             }
         }
     }
