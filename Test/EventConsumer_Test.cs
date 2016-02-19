@@ -16,11 +16,11 @@ namespace Test
             SqlConnectionStringBuilder scsb = new SqlConnectionStringBuilder();
             scsb.DataSource = "localhost";
             scsb.IntegratedSecurity = true;
-            SqlConnection conn = new SqlConnection(scsb.ConnectionString);
+            DatabaseContext context = new DatabaseContext(scsb.ConnectionString);
 
             IStore store = new RegistryStore("second");
 
-            EventConsumer ec = new EventConsumer(conn, "C:\\SqlServer\\second", store);
+            EventConsumer ec = new EventConsumer(context, "C:\\SqlServer\\second", store);
 
             var events = ec.GetLastEvents();
 

@@ -42,10 +42,10 @@ namespace SQLXEtoEventHubCmd
             #endregion
 
             SqlConnectionStringBuilder sb = new SqlConnectionStringBuilder("Server=localhost;Trusted_Connection=True;");
-            SqlConnection conn = new SqlConnection(sb.ConnectionString);
+            DatabaseContext context = new DatabaseContext(sb.ConnectionString);
 
             RegistryStore rs = new RegistryStore(EH_NAME);
-            EventConsumer ec = new EventConsumer(conn, EH_PATH, rs);
+            EventConsumer ec = new EventConsumer(context, EH_PATH, rs);
             EventHubWriter ehw = new EventHubWriter(EH_NAME, EH_ENV);
 
             var events = ec.GetLastEvents();
