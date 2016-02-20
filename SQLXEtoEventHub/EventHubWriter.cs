@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ServiceBus.Messaging;
 using Newtonsoft.Json;
 
 namespace SQLXEtoEventHub
 {
     public class EventHubWriter
     {
-        protected EventHubClient client;
+        public string EventHubName { get; set; }
+        public string EventHubNameNamespace { get; set; }
+        public string PolicyName { get; set; }
 
-        public string EventHubName { get; private set;  }
-        public string ConnectionString { get; private set; }
+        public string PolicyKey { get; set; }
 
-        public EventHubWriter(string EventHubName, string ConnectionString)
+        public EventHubWriter(string EventHubName, string EventHubNameNamespace, string PolicyName, string PolicyKey)
         {
             this.EventHubName = EventHubName;
-            this.ConnectionString = ConnectionString;
-
-            client = EventHubClient.CreateFromConnectionString(ConnectionString, EventHubName);
+            this.EventHubNameNamespace = EventHubNameNamespace;
+            this.PolicyKey = PolicyKey;
+            this.PolicyName = PolicyName;
         }
 
         public static string Serialize(object o)
@@ -40,7 +40,13 @@ namespace SQLXEtoEventHub
 
         public void Send(string text)
         {
-            client.Send(new EventData(Encoding.UTF8.GetBytes(text)));
+            EventHub.Publisher.PushToEventHub(
+                EventHubNameNamespace,
+                EventHubName,
+                PolicyName,
+                PolicyKey,
+                TimeSpan.FromDays(7),
+                text);
         }
     }
 }
