@@ -34,7 +34,6 @@ namespace Test
                 sas,
                 TimeSpan.FromDays(1),
                 payload);
-
         }
     }
 }
