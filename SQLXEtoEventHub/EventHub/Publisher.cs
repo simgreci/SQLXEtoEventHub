@@ -9,6 +9,8 @@ namespace SQLXEtoEventHub.EventHub
 {
     public class Publisher
     {
+        public static DateTime DT_START = new DateTime(1970, 1, 1);
+
         public static string GenerateSignature(
             string policyName,
             string sasKey,
@@ -16,12 +18,14 @@ namespace SQLXEtoEventHub.EventHub
             TimeSpan duration)
         {
             string urlEncoded = System.Net.WebUtility.UrlEncode(uri.ToString());
-            string expiry = DateTime.Now.Add(duration).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+            DateTime dtEpiry = DateTime.Now.Add(duration);
+            string expiry = ((int)(dtEpiry - DT_START).TotalSeconds).ToString();
 
             string strToSign = string.Format("{0:S}\n{1:S}", urlEncoded, expiry);
             var bytesToSign = System.Text.Encoding.UTF8.GetBytes(strToSign);
 
-            System.Security.Cryptography.HMACSHA256 SHA256 = new System.Security.Cryptography.HMACSHA256(Convert.FromBase64String(sasKey));
+            System.Security.Cryptography.HMACSHA256 SHA256 = new System.Security.Cryptography.HMACSHA256(System.Text.Encoding.UTF8.GetBytes(sasKey));
             string strHash2Base64 = Convert.ToBase64String(SHA256.ComputeHash(bytesToSign));
 
             string strSig = System.Net.WebUtility.UrlEncode(strHash2Base64);
@@ -43,7 +47,7 @@ namespace SQLXEtoEventHub.EventHub
             TimeSpan duration,
             string content)
         {
-            string url = string.Format("https://{}.servicebus.windows.net/{}/messages",
+            string url = string.Format("https://{0:S}.servicebus.windows.net/{1:S}/messages",
                       sbNamespace,
                       eventHubName);
 
@@ -55,25 +59,17 @@ namespace SQLXEtoEventHub.EventHub
                 uri,
                 duration);
 
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(content);
+
             var req = WebRequest.Create(uri);
+            req.Method = "POST";
+            req.ContentLength = payload.Length;           
 
             req.Headers.Add("Authorization", signature);
 
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(content);
             req.GetRequestStream().Write(payload, 0, payload.Length);
-            
 
-            //byte[] buffer = new byte[1024 * 64];
-            //int iRead;
-
-
-            //using (var output = req.GetRequestStream())
-            //{
-            //    while ((iRead = content.Read(buffer, 0, buffer.Length)) > 0)
-            //    {
-            //        output.Write(buffer, 0, iRead);
-            //    }
-            //}
+            var resp = req.GetResponse();
         }
     }
 }
