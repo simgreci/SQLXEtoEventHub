@@ -45,7 +45,7 @@ namespace SQLXEtoEventHub.EventHub
             string policyName,
             string sasKey,
             TimeSpan duration,
-            string content)
+            byte[] payload)
         {
             string url = string.Format("https://{0:S}.servicebus.windows.net/{1:S}/messages",
                       sbNamespace,
@@ -59,17 +59,29 @@ namespace SQLXEtoEventHub.EventHub
                 uri,
                 duration);
 
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(content);
-
             var req = WebRequest.Create(uri);
             req.Method = "POST";
-            req.ContentLength = payload.Length;           
+            req.ContentLength = payload.Length;
 
             req.Headers.Add("Authorization", signature);
 
             req.GetRequestStream().Write(payload, 0, payload.Length);
 
             var resp = req.GetResponse();
+        }
+
+        public static void PushToEventHub(
+            string sbNamespace,
+            string eventHubName,
+            string policyName,
+            string sasKey,
+            TimeSpan duration,
+            string content)
+        {
+
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(content);
+
+            PushToEventHub(sbNamespace, eventHubName, policyName, sasKey, duration, payload);
         }
     }
 }
