@@ -13,14 +13,11 @@ namespace Test
         [TestMethod]
         public void TestEventConsumer()
         {
-            SqlConnectionStringBuilder scsb = new SqlConnectionStringBuilder();
-            scsb.DataSource = "localhost";
-            scsb.IntegratedSecurity = true;
-            DatabaseContext context = new DatabaseContext(scsb.ConnectionString);
+            DatabaseContext context = new DatabaseContext(TestParameters.CONNECTION_STRING);
 
-            IStore store = new RegistryStore("second");
+            IStore store = new RegistryStore(TestParameters.XESESSION_NAME);
 
-            EventConsumer ec = new EventConsumer(context, "C:\\SqlServer\\second", store);
+            EventConsumer ec = new EventConsumer(context, TestParameters.XE_PATH, store);
 
             var events = ec.GetLastEvents();
 

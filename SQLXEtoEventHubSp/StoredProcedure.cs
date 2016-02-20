@@ -28,7 +28,6 @@ namespace SQLXEtoEventHubSp
                 {
                     if (DBHelper.XESessionExist(context, trace_name))
                     {
-
                         XESession session = DBHelper.GetSession(context, trace_name);
                         RegistryStore rs = new RegistryStore(trace_name);
                         EventConsumer c = new EventConsumer(context, session.FilePath, rs);

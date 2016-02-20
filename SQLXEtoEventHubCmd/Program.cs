@@ -1,19 +1,15 @@
-﻿using System;
+﻿using log4net;
 using SQLXEtoEventHub;
-using SQLXEtoEventHub.XEvent;
-using log4net;
-using System.Data.SqlClient;
 using SQLXEtoEventHub.Store;
+using SQLXEtoEventHub.XEvent;
+using System;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace SQLXEtoEventHubCmd
 {
     class Program
     {
-        public const string EH_ENV = "EVENT_HUB_CONNECTION_STRING";
-        public const string EH_NAME = "EVENT_HUB_NAME";
-        public const string EH_PATH = "XE_PATH";
-        public const string EH_SQL = "XE_DB";
-
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
 
         private static string _EventHubConnectionString;
@@ -26,14 +22,14 @@ namespace SQLXEtoEventHubCmd
             log4net.Config.XmlConfigurator.Configure(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SQLXEtoEventHub.log4net.xml"));
 
             #region Read Environment Variables
-            _EventHubConnectionString = Environment.GetEnvironmentVariable(EH_ENV);
-            _EventHubName = Environment.GetEnvironmentVariable(EH_NAME);
-            _XEFilePath = Environment.GetEnvironmentVariable(EH_PATH);
-            _XESQLConnString = Environment.GetEnvironmentVariable(EH_SQL);
+            _EventHubConnectionString = Environment.GetEnvironmentVariable("EH_CONNECTION_STRING");
+            _EventHubName = Environment.GetEnvironmentVariable("EH_NAME");
+            _XEFilePath = Environment.GetEnvironmentVariable("EH_XESESSION_PATH");
+            _XESQLConnString = Environment.GetEnvironmentVariable("EH_SQL_CONNECTION_STRING");
 
-            if (string.IsNullOrEmpty(_EventHubConnectionString) | 
-                string.IsNullOrEmpty(_EventHubName) | 
-                string.IsNullOrEmpty(_XEFilePath) | 
+            if (string.IsNullOrEmpty(_EventHubConnectionString) ||
+                string.IsNullOrEmpty(_EventHubName) ||
+                string.IsNullOrEmpty(_XEFilePath) ||
                 string.IsNullOrEmpty(_XESQLConnString))
             {
                 log.Error("Must declare Environment Variables first!");
@@ -42,29 +38,35 @@ namespace SQLXEtoEventHubCmd
             #endregion
 
             SqlConnectionStringBuilder sb = new SqlConnectionStringBuilder("Server=localhost;Trusted_Connection=True;");
-            DatabaseContext context = new DatabaseContext(sb.ConnectionString);
+            IDatabaseContext context = new DatabaseContext(sb.ConnectionString);
 
-            RegistryStore rs = new RegistryStore(EH_NAME);
-            EventConsumer ec = new EventConsumer(context, EH_PATH, rs);
-            EventHubWriter ehw = new EventHubWriter(EH_NAME, EH_ENV);
+            IStore rs = new RegistryStore(_EventHubName);
+            EventConsumer ec = new EventConsumer(context, _XEFilePath, rs);
+            EventHubWriter ehw = new EventHubWriter(_EventHubName, _EventHubConnectionString);
 
             var events = ec.GetLastEvents();
 
-            try
+            Parallel.ForEach(events, (e) =>
             {
-                foreach (XEPayload pl in events)
-                {
-                    log.DebugFormat("Sending event {0:S}", pl.HashTable);
-                    ehw.Send(pl.HashTable);
-                    log.DebugFormat("Chechpointing position {0:S}", pl.Position);
-                    ec.CheckpointPosition(pl.Position);
-                }
-            }
-            catch (Exception exce)
-            {
-                log.ErrorFormat("{0:S}", exce.Message);
-                return -234;
-            }
+                ehw.Send(e);
+                log.Info(e.Position.Offset.ToString());
+            });
+
+            //try
+            //{
+            //    foreach (XEPayload pl in events)
+            //    {
+            //        log.DebugFormat("Sending event {0:S}", pl.HashTable);
+            //        ehw.Send(pl.HashTable);
+            //        log.DebugFormat("Chechpointing position {0:S}", pl.Position);
+            //        ec.CheckpointPosition(pl.Position);
+            //    }
+            //}
+            //catch (Exception exce)
+            //{
+            //    log.ErrorFormat("{0:S}", exce.Message);
+            //    return -234;
+            //}
 
             log.Info("Processing completed.");
             return 0;
