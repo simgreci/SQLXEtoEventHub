@@ -10,15 +10,15 @@ namespace SQLXEtoEventHub
     public class EventHubWriter
     {
         public string EventHubName { get; set; }
-        public string EventHubNameNamespace { get; set; }
+        public string ServiceBusNamespace { get; set; }
         public string PolicyName { get; set; }
 
         public string PolicyKey { get; set; }
 
-        public EventHubWriter(string EventHubName, string EventHubNameNamespace, string PolicyName, string PolicyKey)
+        public EventHubWriter(string EventHubName, string ServiceBusNamespace, string PolicyName, string PolicyKey)
         {
             this.EventHubName = EventHubName;
-            this.EventHubNameNamespace = EventHubNameNamespace;
+            this.ServiceBusNamespace = ServiceBusNamespace;
             this.PolicyKey = PolicyKey;
             this.PolicyName = PolicyName;
         }
@@ -41,7 +41,7 @@ namespace SQLXEtoEventHub
         public void Send(string text)
         {
             EventHub.Publisher.PushToEventHub(
-                EventHubNameNamespace,
+                ServiceBusNamespace,
                 EventHubName,
                 PolicyName,
                 PolicyKey,

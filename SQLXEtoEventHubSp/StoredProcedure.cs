@@ -9,17 +9,20 @@ namespace SQLXEtoEventHubSp
 {   
     public class StoredProcedure
     {
-        [SqlProcedure()]
-        public static void sp_send_xe_to_eventhub(string trace_name, string event_hub_connection, string event_hub_name)
+        private static void CheckNullParameter(string parameter, string parameter_name)
         {
-            if (string.IsNullOrEmpty(trace_name))
-                throw new ArgumentNullException("@trace_name", "Parameter is required.");
+            if (string.IsNullOrEmpty(parameter))
+                throw new ArgumentNullException(parameter_name, "Parameter is required.");
+        }
 
-            if(string.IsNullOrEmpty(event_hub_connection))
-                throw new ArgumentNullException("@event_hub_connection", "Parameter is required.");
-
-            if (string.IsNullOrEmpty(event_hub_name))
-                throw new ArgumentNullException("@event_hub_name", "Parameter is required.");
+        [SqlProcedure()]
+        public static void sp_send_xe_to_eventhub(string trace_name, string event_hub_name, string service_bus_namespace, string policy, string policy_key)
+        {
+            CheckNullParameter(trace_name, "@trace_name");
+            CheckNullParameter(event_hub_name, "@event_hub_name");
+            CheckNullParameter(service_bus_namespace, "@service_bus_namespace");
+            CheckNullParameter(policy, "@policy");
+            CheckNullParameter(policy_key, "@policy_key");
 
             if (SqlContext.IsAvailable)
             {
@@ -34,7 +37,7 @@ namespace SQLXEtoEventHubSp
                         EventConsumer c = new EventConsumer(context, session.FilePath, rs);
                         List<SQLXEtoEventHub.XEvent.XEPayload> payloads = c.GetLastEvents();
 
-                        EventHubWriter writer = new EventHubWriter(event_hub_name, event_hub_connection);
+                        EventHubWriter writer = new EventHubWriter(event_hub_name, service_bus_namespace, policy, policy_key);
                         foreach (XEPayload p in payloads)
                         {
                             writer.Send(p);

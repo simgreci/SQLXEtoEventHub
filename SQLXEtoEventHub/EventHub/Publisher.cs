@@ -80,7 +80,6 @@ namespace SQLXEtoEventHub.EventHub
         {
 
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(content);
-
             PushToEventHub(sbNamespace, eventHubName, policyName, sasKey, duration, payload);
         }
     }
