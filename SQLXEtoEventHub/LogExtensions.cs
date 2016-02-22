@@ -1,4 +1,4 @@
-﻿// ==============================================================================
+// ==============================================================================
 // 
 // RealDimensions Software, LLC - Copyright © 2012 - Present - Released under the Apache 2.0 License
 // 
@@ -39,7 +39,7 @@ namespace SQLXEtoEventHub
         /// <returns>Instance of a logger for the object.</returns>
         public static ILog Log<T>(this T type)
         {
-            string objectName = typeof(T).FullName;
+            string objectName = typeof (T).FullName;
             return Log(objectName);
         }
 
