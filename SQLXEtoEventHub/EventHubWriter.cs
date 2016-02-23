@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace SQLXEtoEventHub
 {
@@ -19,19 +18,51 @@ namespace SQLXEtoEventHub
             this.PolicyName = PolicyName;
         }
 
-        public static string Serialize(object o)
+        public static string Serialize(System.Collections.Generic.Dictionary<string, object> ht)
         {
             System.IO.StringWriter wr = new System.IO.StringWriter();
-            JsonSerializer ser = new JsonSerializer();
-            ser.Serialize(wr, o);
+            wr.Write("{");
+
+            // this should guarantee english decimal separators. If not, try en-us.
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+            bool fFirst = true;
+
+            foreach (var kvp in ht)
+            {
+                if(!fFirst)
+                {
+                    wr.WriteLine(",");
+                }
+                else
+                {
+                    wr.WriteLine();
+                    fFirst = false;
+                }
+                wr.Write(string.Format("\t\"{0:S}\": ", kvp.Key));
+
+                if (kvp.Value is double)
+                    wr.Write(((double)kvp.Value).ToString());
+                else if (kvp.Value is int)
+                    wr.Write(((int)kvp.Value).ToString());
+                else if (kvp.Value is long)
+                    wr.Write(((long)kvp.Value).ToString());
+                else if (kvp.Value is DateTime)
+                    wr.Write(UnixTicks(((DateTime)kvp.Value)).ToString());
+                else
+                    wr.Write(string.Format("\"{0:S}\"", kvp.Value.ToString()));
+            }
+
+            wr.WriteLine();
+            wr.WriteLine("}");
             wr.Flush();
 
             return wr.ToString();
         }
 
-        public void Send(object o)
-        {            
-            Send(Serialize(o));
+        public void Send(XEvent.XEPayload payload)
+        {
+            Send(Serialize(payload.Dictionary));
         }
 
         public void Send(string text)
@@ -43,6 +74,15 @@ namespace SQLXEtoEventHub
                 PolicyKey,
                 TimeSpan.FromDays(7),
                 text);
+        }
+
+        // returns the number of milliseconds since Jan 1, 1970 (useful for converting C# dates to JS dates)
+        public static double UnixTicks(DateTime dt)
+        {
+            DateTime d1 = new DateTime(1970, 1, 1);
+            DateTime d2 = dt.ToUniversalTime();
+            TimeSpan ts = new TimeSpan(d2.Ticks - d1.Ticks);
+            return ts.TotalMilliseconds;
         }
     }
 }

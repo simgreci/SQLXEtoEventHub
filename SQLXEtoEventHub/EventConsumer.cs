@@ -36,7 +36,7 @@ namespace SQLXEtoEventHub
             {
                 pos = Store.Read();
             }
-            catch (Exception exce)
+            catch (Exception)
             {
                 pos = new XEPosition();
             }
@@ -97,8 +97,8 @@ namespace SQLXEtoEventHub
 
                     System.Threading.Tasks.Parallel.ForEach(payloads, (pl) =>
                     {
-                        pl.HashTable[HT_SQL_SERVER_NAME] = sqlServerName;
-                        pl.HashTable[HT_SQL_SERVER_VERSION] = sqlServerVersion;
+                        pl.Dictionary[HT_SQL_SERVER_NAME] = sqlServerName;
+                        pl.Dictionary[HT_SQL_SERVER_VERSION] = sqlServerVersion;
                     });
 
                     return payloads;
@@ -125,7 +125,7 @@ namespace SQLXEtoEventHub
                 doc.LoadXml(reader["event_data"].ToString());
                 DateTime eventTime = DateTime.Parse(doc.FirstChild.Attributes["timestamp"].Value);
 
-                System.Collections.Hashtable ht = new System.Collections.Hashtable();
+                System.Collections.Generic.Dictionary<string, object> ht = new System.Collections.Generic.Dictionary<string, object>();
 
                 foreach (XmlNode node in doc.SelectNodes("/event/data"))
                 {
@@ -152,7 +152,7 @@ namespace SQLXEtoEventHub
             return payloads;
         }
 
-        protected static void AddTyped(System.Collections.Hashtable ht, string name, string value)
+        protected static void AddTyped(System.Collections.Generic.Dictionary<string, object> ht, string name, string value)
         {
             long lVal;
             if (long.TryParse(value, out lVal))
