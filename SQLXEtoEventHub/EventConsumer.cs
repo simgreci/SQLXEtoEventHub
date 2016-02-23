@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Xml;
-using System.Xml.Linq;
 using SQLXEtoEventHub.XEvent;
 using SQLXEtoEventHub.Store;
 
@@ -15,8 +14,6 @@ namespace SQLXEtoEventHub
         public const string HT_SQL_SERVER_VERSION = "SQLXEtoEventHub_SQLServer_Version";
         public const string HT_NAME = "SQLXEtoEventHub_name";
         public const string HT_EVENT_TIME = "SQLXEtoEventHub_event_time";
-
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(EventConsumer));
 
         public string XELPath { get; protected set; }
 
@@ -41,7 +38,6 @@ namespace SQLXEtoEventHub
             }
             catch (Exception exce)
             {
-                log.WarnFormat("Key missing? {0:S}", exce.Message);
                 pos = new XEPosition();
             }
             #endregion

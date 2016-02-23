@@ -1,7 +1,6 @@
 ﻿using log4net;
 using SQLXEtoEventHub;
 using SQLXEtoEventHub.Store;
-using SQLXEtoEventHub.XEvent;
 using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
