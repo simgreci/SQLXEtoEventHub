@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xetohub", "xetohub\xetohub.csproj", "{CF17D1F4-F475-4143-B704-2F9C2B54EC79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xetohub.cmd", "xetohub.cmd\xetohub.cmd.csproj", "{7A7CCBF7-A51B-4ACA-8CCA-A2751D36EA34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xetohub.test", "xetohub.test\xetohub.test.csproj", "{3784FDE1-3F9B-4184-9725-B46665BCEC79}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF17D1F4-F475-4143-B704-2F9C2B54EC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF17D1F4-F475-4143-B704-2F9C2B54EC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF17D1F4-F475-4143-B704-2F9C2B54EC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF17D1F4-F475-4143-B704-2F9C2B54EC79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A7CCBF7-A51B-4ACA-8CCA-A2751D36EA34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7CCBF7-A51B-4ACA-8CCA-A2751D36EA34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7CCBF7-A51B-4ACA-8CCA-A2751D36EA34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7CCBF7-A51B-4ACA-8CCA-A2751D36EA34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3784FDE1-3F9B-4184-9725-B46665BCEC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3784FDE1-3F9B-4184-9725-B46665BCEC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3784FDE1-3F9B-4184-9725-B46665BCEC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3784FDE1-3F9B-4184-9725-B46665BCEC79}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
