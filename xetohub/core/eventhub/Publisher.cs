@@ -65,7 +65,8 @@ namespace xetohub.core.eventhub
             {
                 reqStream.Write(payload, 0, payload.Length);
             }
-            var resp = req.GetResponse();
+            using (var resp = req.GetResponse())
+            { }
         }
 
         public static void PushToEventHub(
