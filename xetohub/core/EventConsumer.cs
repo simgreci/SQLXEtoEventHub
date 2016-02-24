@@ -43,69 +43,66 @@ namespace xetohub.core
             #endregion
 
             #region Data retrieval
-            using (this.DatabaseContext)
+            string sqlServerName;
+            string sqlServerVersion;
+
+            using (SqlCommand cmd = new SqlCommand("SELECT @@SERVERNAME, @@VERSION", this.DatabaseContext.Connection))
             {
-                string sqlServerName;
-                string sqlServerVersion;
-
-                using (SqlCommand cmd = new SqlCommand("SELECT @@SERVERNAME, @@VERSION", this.DatabaseContext.Connection))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        reader.Read();
-                        sqlServerName = reader.GetString(0);
-                        sqlServerVersion = reader.GetString(1);
-                    }
+                    reader.Read();
+                    sqlServerName = reader.GetString(0);
+                    sqlServerVersion = reader.GetString(1);
+                }
+            }
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.Connection = this.DatabaseContext.Connection;
+                cmd.CommandTimeout = 0;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "select * from sys.fn_xe_file_target_read_file(@path,null,@file,@offset) a";
+
+                var pathParam = new SqlParameter("path", SqlDbType.NVarChar, 4000);
+                pathParam.Value = XELPath;
+
+                SqlParameter fileParam;
+                if (pos.LastFile.Equals(String.Empty))
+                {
+                    fileParam = new SqlParameter("file", DBNull.Value);
+                }
+                else
+                {
+                    fileParam = new SqlParameter("file", pos.LastFile);
                 }
 
-                using (SqlCommand cmd = new SqlCommand())
+                SqlParameter offsetParam;
+                if (pos.Offset.Equals(0))
                 {
-                    cmd.Connection = this.DatabaseContext.Connection;
-                    cmd.CommandTimeout = 0;
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = "select * from sys.fn_xe_file_target_read_file(@path,null,@file,@offset) a";
-
-                    var pathParam = new SqlParameter("path", SqlDbType.NVarChar, 4000);
-                    pathParam.Value = XELPath;
-
-                    SqlParameter fileParam;
-                    if (pos.LastFile.Equals(String.Empty))
-                    {
-                        fileParam = new SqlParameter("file", DBNull.Value);
-                    }
-                    else
-                    {
-                        fileParam = new SqlParameter("file", pos.LastFile);
-                    }
-
-                    SqlParameter offsetParam;
-                    if (pos.Offset.Equals(0))
-                    {
-                        offsetParam = new SqlParameter("offset", DBNull.Value);
-                    }
-                    else
-                    {
-                        offsetParam = new SqlParameter("offset", pos.Offset);
-                    }
-
-                    cmd.Parameters.Add(pathParam);
-                    cmd.Parameters.Add(fileParam);
-                    cmd.Parameters.Add(offsetParam);
-                    List<XEPayload> payloads;
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        payloads = ParsePayloads(reader);
-                    }
-
-                    foreach (XEPayload p in payloads)
-                    {
-                        p.Dictionary[HT_SQL_SERVER_NAME] = sqlServerName;
-                        p.Dictionary[HT_SQL_SERVER_VERSION] = sqlServerVersion;
-                    }
-
-                    return payloads;
+                    offsetParam = new SqlParameter("offset", DBNull.Value);
                 }
+                else
+                {
+                    offsetParam = new SqlParameter("offset", pos.Offset);
+                }
+
+                cmd.Parameters.Add(pathParam);
+                cmd.Parameters.Add(fileParam);
+                cmd.Parameters.Add(offsetParam);
+                List<XEPayload> payloads;
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    payloads = ParsePayloads(reader);
+                }
+
+                foreach (XEPayload p in payloads)
+                {
+                    p.Dictionary[HT_SQL_SERVER_NAME] = sqlServerName;
+                    p.Dictionary[HT_SQL_SERVER_VERSION] = sqlServerVersion;
+                }
+
+                return payloads;
             }
             #endregion
         }

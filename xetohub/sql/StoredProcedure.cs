@@ -24,26 +24,44 @@ namespace xetohub.sql
             CheckNullParameter(policy, "@policy");
             CheckNullParameter(policy_key, "@policy_key");
 
+            List<XEPayload> payloads = null;
+
+            SqlContext.Pipe.Send("Opening context connection...");
+
             if (SqlContext.IsAvailable)
             {
-                DatabaseContext context = new DatabaseContext("context connection = true");
-                using (context)
+                using (DatabaseContext context = new DatabaseContext("context connection = true"))
                 {
-                    if (DBHelper.XESessionExist(context, trace_name))
+                    using (context)
                     {
-                        XESession session = DBHelper.GetSession(context, trace_name);
-                        RegistryStore rs = new RegistryStore(trace_name);
-                        EventConsumer c = new EventConsumer(context, session.FilePath, rs);
-                        List<XEPayload> payloads = c.GetLastEvents();
-
-                        EventHubWriter writer = new EventHubWriter(event_hub_name, service_bus_namespace, policy, policy_key);
-                        foreach (XEPayload p in payloads)
+                        if (DBHelper.XESessionExist(context, trace_name))
                         {
-                            writer.Send(p);
+                            SqlContext.Pipe.Send("Reading XE session info...");
+                            XESession session = DBHelper.GetSession(context, trace_name);
+
+                            SqlContext.Pipe.Send("Reading last position...");
+                            RegistryStore rs = new RegistryStore(trace_name);
+
+                            SqlContext.Pipe.Send(string.Format("last position is {0:S}", rs.ToString()));
+                            EventConsumer c = new EventConsumer(context, session.FilePath, rs);
+
+                            SqlContext.Pipe.Send("reading events...");
+                            payloads = c.GetLastEvents();
+                            SqlContext.Pipe.Send(string.Format("{0:N0} events read", payloads.Count));
                         }
+                        else
+                            throw new Exception(String.Format("Session {0:S} does not exists or is not running.", trace_name));
                     }
-                    else
-                        throw new Exception(String.Format("Session {0:S} does not exists or is not running.", trace_name));
+                }
+            }
+
+            if (payloads != null)
+            {
+                EventHubWriter writer = new EventHubWriter(event_hub_name, service_bus_namespace, policy, policy_key);
+                foreach (XEPayload p in payloads)
+                {
+                    SqlContext.Pipe.Send("Sending one event to EH");
+                    writer.Send(p);
                 }
             }
         }

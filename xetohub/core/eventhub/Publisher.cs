@@ -55,13 +55,16 @@ namespace xetohub.core.eventhub
                 uri,
                 duration);
 
-            var req = WebRequest.Create(uri);
+            System.Net.HttpWebRequest req = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
             req.Method = "POST";
             req.Timeout = 60000;
             req.ContentLength = payload.Length;
-
             req.Headers.Add("Authorization", signature);
-            req.GetRequestStream().Write(payload, 0, payload.Length);
+
+            using (var reqStream = req.GetRequestStream())
+            {
+                reqStream.Write(payload, 0, payload.Length);
+            }
             var resp = req.GetResponse();
         }
 
