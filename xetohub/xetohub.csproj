@@ -50,7 +50,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="sql-scripts\setup.sql" />
+    <None Include="sql-scripts\setup.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
