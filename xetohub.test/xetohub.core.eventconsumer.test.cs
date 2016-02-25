@@ -9,11 +9,25 @@ namespace xetohub.test
     public class EventConsumer_Test
     {
         [TestMethod]
-        public void TestEventConsumer()
+        public void TestEventConsumerWithRegistryStore()
         {
             DatabaseContext context = new DatabaseContext(Parameters.CONNECTION_STRING);
 
             IStore store = new RegistryStore(Parameters.XESESSION_NAME);
+
+            EventConsumer ec = new EventConsumer(context, Parameters.XE_PATH, store);
+
+            var events = ec.GetLastEvents();
+
+            string s = EventHubWriter.Serialize(events[0].Dictionary);
+        }
+
+        [TestMethod]
+        public void TestEventConsumerWithSqlStore()
+        {
+            DatabaseContext context = new DatabaseContext(Parameters.CONNECTION_STRING);
+
+            IStore store = new SqlStore(context,Parameters.XESESSION_NAME);
 
             EventConsumer ec = new EventConsumer(context, Parameters.XE_PATH, store);
 

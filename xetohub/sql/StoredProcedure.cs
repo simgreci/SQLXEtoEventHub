@@ -25,12 +25,14 @@ namespace xetohub.sql
             CheckNullParameter(policy_key, "@policy_key");
 
             List<XEPayload> payloads = null;
+            DatabaseContext context = new DatabaseContext("context connection = true");
+            SqlStore sqlStore = new SqlStore(context, trace_name);
 
             SqlContext.Pipe.Send("Opening context connection...");
 
             if (SqlContext.IsAvailable)
             {
-                using (DatabaseContext context = new DatabaseContext("context connection = true"))
+                using (context)
                 {
                     using (context)
                     {
@@ -40,10 +42,10 @@ namespace xetohub.sql
                             XESession session = DBHelper.GetSession(context, trace_name);
 
                             SqlContext.Pipe.Send("Reading last position...");
-                            RegistryStore rs = new RegistryStore(trace_name);
+                            XEPosition currentPosition = sqlStore.Read();
 
-                            SqlContext.Pipe.Send(string.Format("last position is {0:S}", rs.ToString()));
-                            EventConsumer c = new EventConsumer(context, session.FilePath, rs);
+                            SqlContext.Pipe.Send(string.Format("last position is {0:S}", currentPosition.ToString()));
+                            EventConsumer c = new EventConsumer(context, session.FilePath, sqlStore);
 
                             SqlContext.Pipe.Send("reading events...");
                             payloads = c.GetLastEvents();
@@ -62,6 +64,7 @@ namespace xetohub.sql
                 {
                     SqlContext.Pipe.Send("Sending one event to EH");
                     writer.Send(p);
+                    sqlStore.Update(p.Position);
                 }
             }
         }

@@ -24,13 +24,16 @@ namespace xetohub.core.store
                 SqlParameter param = new SqlParameter("session_name", SqlDbType.NVarChar, 256);
                 param.Value = _sessionName;
                 cmd.Parameters.Add(param);
-                SqlDataReader reader = cmd.ExecuteReader();
+
                 XEPosition pos = new XEPosition();
-                if (reader.HasRows)
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    reader.Read();
-                    pos.LastFile = reader["session_file_name"].ToString();
-                    pos.Offset = Convert.ToInt64(reader["session_offset"]);
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        pos.LastFile = reader["session_file_name"].ToString();
+                        pos.Offset = Convert.ToInt64(reader["session_offset"]);
+                    }
                 }
                 return pos;
             }
