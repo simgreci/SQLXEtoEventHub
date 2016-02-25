@@ -42,6 +42,7 @@
     <Compile Include="core\eventhub\Publisher.cs" />
     <Compile Include="core\store\IStore.cs" />
     <Compile Include="core\store\RegistryStore.cs" />
+    <Compile Include="core\store\SqlStore.cs" />
     <Compile Include="core\xevent\XEPayload.cs" />
     <Compile Include="core\xevent\XEPosition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
