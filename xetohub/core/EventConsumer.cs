@@ -31,7 +31,6 @@ namespace xetohub.core
         public List<XEPayload> GetLastEvents()
         {
             XEPosition pos;
-            #region Read from registry
             try
             {
                 pos = Store.Read();
@@ -40,13 +39,12 @@ namespace xetohub.core
             {
                 pos = new XEPosition();
             }
-            #endregion
 
             #region Data retrieval
             string sqlServerName;
             string sqlServerVersion;
 
-            using (SqlCommand cmd = new SqlCommand("SELECT @@SERVERNAME, @@VERSION", this.DatabaseContext.Connection))
+            using (SqlCommand cmd = new SqlCommand("SELECT @@SERVERNAME, SERVERPROPERTY('productversion')", this.DatabaseContext.Connection))
             {
                 using (var reader = cmd.ExecuteReader())
                 {
